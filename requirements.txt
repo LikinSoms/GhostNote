@@ -1,0 +1,9 @@
+﻿numpy
+scipy
+soundfile
+cryptography
+click
+fastapi
+uvicorn
+python-multipart
+pytest
