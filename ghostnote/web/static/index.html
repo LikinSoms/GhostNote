@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostNote - Audio Steganography with Intelligent Algorithm Selection</title>
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: #111827;
+      --bg-card-alt: #1a2234;
+      --border-color: #243048;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-purple: #8b5cf6;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(180deg, #161f30 0%, #0b0f19 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.2rem;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+    }
+
+    .brand h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: block;
+      font-weight: 500;
+    }
+
+    .tech-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--accent-cyan);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-purple {
+      background: rgba(139, 92, 246, 0.12);
+      border-color: rgba(139, 92, 246, 0.3);
+      color: #a78bfa;
+    }
+
+    .badge-green {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: var(--accent-emerald);
+    }
+
+    nav {
+      display: flex;
+      gap: 0.5rem;
+      background: var(--bg-card);
+      padding: 0.5rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-btn.active {
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #e2e8f0;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.65rem;
+    }
+
+    /* File Drop Zone */
+    .drop-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: 10px;
+      padding: 2rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(17, 24, 39, 0.4);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.05);
+    }
+
+    .drop-zone input[type="file"] {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .drop-zone-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent-cyan);
+    }
+
+    .quick-samples {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .quick-samples span {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .btn-sample {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-sample:hover {
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+    }
+
+    /* Audio Player */
+    audio {
+      width: 100%;
+      margin-top: 1rem;
+      border-radius: 8px;
+    }
+
+    /* Scores & Progress Bars */
+    .score-container {
+      margin-top: 1rem;
+      background: var(--bg-card-alt);
+      border-radius: 10px;
+      padding: 1.25rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .score-row {
+      margin-bottom: 1rem;
+    }
+
+    .score-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .score-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .progress-bar-bg {
+      background: rgba(255, 255, 255, 0.08);
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 5px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .fill-echo {
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    }
+
+    .fill-dsss {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+
+    /* Decision banner */
+    .decision-banner {
+      margin-top: 1.25rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .decision-icon {
+      font-size: 1.8rem;
+    }
+
+    .decision-text h3 {
+      font-size: 0.95rem;
+      color: var(--accent-emerald);
+      font-weight: 700;
+    }
+
+    .decision-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .metric-box {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.65rem;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: monospace;
+    }
+
+    .metric-lbl {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 0.2rem;
+    }
+
+    .reasons-list {
+      margin-top: 1rem;
+      padding-left: 1.2rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .reasons-list li {
+      margin-bottom: 0.4rem;
+    }
+
+    /* Form Inputs */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    textarea, input[type="text"], input[type="password"], select {
+      width: 100%;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    textarea:focus, input[type="text"]:focus, input[type="password"]:focus, select:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #0284c7, #06b6d4);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      padding: 0.9rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #0891b2);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Result Box */
+    .result-box {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card-alt);
+    }
+
+    .result-success {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .result-error {
+      border-color: rgba(244, 63, 94, 0.4);
+      background: rgba(244, 63, 94, 0.08);
+    }
+
+    .plaintext-display {
+      background: #000;
+      border: 1px solid var(--border-color);
+      padding: 1rem;
+      border-radius: 6px;
+      font-family: monospace;
+      color: #4ade80;
+      word-break: break-all;
+      margin: 0.75rem 0;
+      font-size: 0.95rem;
+    }
+
+    .deep-dive-card {
+      margin-bottom: 1.5rem;
+    }
+
+    .deep-dive-card h3 {
+      color: var(--accent-cyan);
+      margin-bottom: 0.5rem;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .compare-table th, .compare-table td {
+      border: 1px solid var(--border-color);
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+    }
+
+    .compare-table th {
+      background: var(--bg-card-alt);
+      color: var(--accent-cyan);
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1.25rem 2rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      background: #090d16;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">&#9836;</div>
+      <div>
+        <h1>GHOSTNOTE</h1>
+        <span>Psychoacoustic Audio Steganography Lab</span>
+      </div>
+    </div>
+    <div class="tech-badges">
+      <span class="badge badge-purple">AES-256-GCM AEAD</span>
+      <span class="badge">Echo Hiding (Cepstral)</span>
+      <span class="badge badge-green">Informed DSSS</span>
+      <span class="badge">WAV & MP3</span>
+    </div>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="switchTab('embed-tab', this)">1. Analyze & Embed</button>
+    <button class="nav-btn" onclick="switchTab('extract-tab', this)">2. Extract & Decrypt</button>
+    <button class="nav-btn" onclick="switchTab('guide-tab', this)">3. DSP & Psychoacoustics Guide</button>
+  </nav>
+
+  <main>
+    <!-- TAB 1: EMBED -->
+    <div id="embed-tab" class="tab-content active">
+      <div class="grid-2">
+        <!-- Left: Audio Carrier & Psychoacoustic Analyzer -->
+        <div class="card">
+          <div class="card-title">&#127911; Carrier Audio & Psychoacoustic Analysis</div>
+
+          <div class="drop-zone" id="drop-zone-embed">
+            <input type="file" id="carrier-file" accept="audio/*" onchange="handleAudioUpload(event)">
+            <div class="drop-zone-icon">&#128266;</div>
+            <p><strong>Click to browse</strong> or drag & drop audio</p>
+            <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 0.3rem;">WAV, MP3, FLAC, AIFF supported</p>
+          </div>
+
+          <div class="quick-samples">
+            <span>Instant Samples:</span>
+            <button class="btn-sample" onclick="loadSample('tonal')">&#127929; Tonal Piano (Echo Best)</button>
+            <button class="btn-sample" onclick="loadSample('noisy')">&#128308; Broadband Noise (DSSS Best)</button>
+            <button class="btn-sample" onclick="loadSample('speech')">&#128100; Speech Formants</button>
+          </div>
+
+          <audio id="audio-preview" controls style="display: none;"></audio>
+
+          <!-- Analyzer Results -->
+          <div id="analyzer-results" style="display: none;">
+            <div class="score-container">
+              <div class="score-row">
+                <div class="score-header">
+                  <span>Echo Hiding Suitability</span>
+                  <span id="score-echo-val">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill fill-echo" id="bar-echo"></div>
+                </div>
+              </div>
+
+              <div class="score-row">
+                <div class="score-header">
+                  <span>DSSS (Spread Spectrum) Suitability</span>
+                  <span id="score-dsss-val">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill fill-dsss" id="bar-dsss"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="decision-banner" id="decision-banner">
+              <div class="decision-icon" id="decision-icon">&#10024;</div>
+              <div class="decision-text">
+                <h3 id="decision-title">Recommended: --</h3>
+                <p id="decision-subtitle">Analysis confidence: --</p>
+              </div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-box">
+                <div class="metric-val" id="m-flatness">--</div>
+                <div class="metric-lbl">Spectral Flatness</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-val" id="m-tonality">--</div>
+                <div class="metric-lbl">Tonality Index</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-val" id="m-crest">--</div>
+                <div class="metric-lbl">Crest Factor</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-val" id="m-transients">--</div>
+                <div class="metric-lbl">Transients / sec</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-val" id="m-dynrange">--</div>
+                <div class="metric-lbl">Dynamic Range</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-val" id="m-capacity">--</div>
+                <div class="metric-lbl">Max Capacity</div>
+              </div>
+            </div>
+
+            <ul class="reasons-list" id="reasons-list"></ul>
+          </div>
+        </div>
+
+        <!-- Right: Message Encryption & Embedding Form -->
+        <div class="card">
+          <div class="card-title">&#128274; AES-256 Encryption & Steganography</div>
+
+          <form id="embed-form" onsubmit="handleEmbed(event)">
+            <div class="form-group">
+              <label for="secret-message">Secret Message Text:</label>
+              <textarea id="secret-message" rows="4" placeholder="Enter confidential message to encrypt and conceal into the audio carrier..." required></textarea>
+              <div style="font-size: 0.75rem; color: var(--text-dim); text-align: right; margin-top: 0.2rem;">
+                <span id="char-count">0</span> characters
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="secret-password">Passphrase (PBKDF2-SHA256 + AES-256-GCM):</label>
+              <input type="password" id="secret-password" placeholder="Strong secret passphrase..." required>
+            </div>
+
+            <div class="grid-2" style="gap: 1rem; margin-bottom: 1.25rem;">
+              <div>
+                <label for="algo-choice">Steganography Algorithm:</label>
+                <select id="algo-choice">
+                  <option value="auto">&#10024; Auto-Select (Acoustic AI)</option>
+                  <option value="echo">Echo Hiding</option>
+                  <option value="dsss">DSSS (Spread Spectrum)</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="format-choice">Output Audio Format:</label>
+                <select id="format-choice">
+                  <option value="wav">WAV (Lossless 24-bit PCM)</option>
+                  <option value="mp3">MP3 (Compressed)</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-embed" class="btn-primary">&#128272; Encrypt & Embed into Audio</button>
+          </form>
+
+          <!-- Embed Result Display -->
+          <div id="embed-result" style="display: none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: EXTRACT -->
+    <div id="extract-tab" class="tab-content">
+      <div class="card" style="max-width: 700px; margin: 0 auto;">
+        <div class="card-title">&#128275; Decrypt & Extract Hidden Payload</div>
+
+        <form id="extract-form" onsubmit="handleExtract(event)">
+          <div class="form-group">
+            <label>Stego Audio File (.wav or .mp3):</label>
+            <div class="drop-zone" id="drop-zone-extract" style="padding: 1.5rem;">
+              <input type="file" id="stego-file" accept="audio/*" required>
+              <div class="drop-zone-icon" style="font-size: 2rem;">&#128190;</div>
+              <p id="stego-file-label">Click to select or drag stego audio file</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="extract-password">Decryption Passphrase:</label>
+            <input type="password" id="extract-password" placeholder="Passphrase used during encryption..." required>
+          </div>
+
+          <div class="form-group">
+            <label for="extract-hint">Algorithm (Optional Hint):</label>
+            <select id="extract-hint">
+              <option value="auto">Auto-Detect Algorithm</option>
+              <option value="echo">Echo Hiding</option>
+              <option value="dsss">DSSS (Spread Spectrum)</option>
+            </select>
+          </div>
+
+          <button type="submit" id="btn-extract" class="btn-primary">&#128275; Extract & Decrypt Message</button>
+        </form>
+
+        <div id="extract-result" style="display: none;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: DSP & PSYCHOACOUSTIC GUIDE -->
+    <div id="guide-tab" class="tab-content">
+      <div class="card deep-dive-card">
+        <h3>How GhostNote Analyzes and Chooses the Optimal Algorithm</h3>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+          Human hearing is governed by non-linear psychoacoustic masking principles. GhostNote uses multi-feature spectral and temporal signal processing to choose between two fundamentally distinct steganographic techniques:
+        </p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Echo Hiding</th>
+              <th>DSSS (Direct Sequence Spread Spectrum)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Primary Domain</strong></td>
+              <td>Temporal / Quefrency Domain (Micro-delays & Cepstrum)</td>
+              <td>Wideband Frequency Domain (Pseudo-Noise Correlation)</td>
+            </tr>
+            <tr>
+              <td><strong>Psychoacoustic Principle</strong></td>
+              <td>Temporal Masking & Haas Integration (&lt; 2ms)</td>
+              <td>Simultaneous Spectral Masking & Sub-audible SNR</td>
+            </tr>
+            <tr>
+              <td><strong>Best Audio Types</strong></td>
+              <td>Harmonic, tonal audio: piano, acoustic guitar, clean solo vocals, strings.</td>
+              <td>Broadband, energetic, noise-like audio: rock, drums, electronic synths, crowd noise.</td>
+            </tr>
+            <tr>
+              <td><strong>Acoustic Signatures</strong></td>
+              <td>Low Spectral Flatness (&lt; 0.15), high crest factor, continuous harmonic decays.</td>
+              <td>High Spectral Flatness (&gt; 0.25), high spectral entropy, frequent transients.</td>
+            </tr>
+            <tr>
+              <td><strong>Lossy MP3 Robustness</strong></td>
+              <td>Moderate (requires lossless WAV to avoid phase cancellation).</td>
+              <td>High (large processing gain pulls PN sequence above MP3 quantization noise).</td>
+            </tr>
+            <tr>
+              <td><strong>Host Signal Interference</strong></td>
+              <td>Host natural pitch harmonics can overlap delay quefrencies.</td>
+              <td>Cancelled out via Informed Embedding before modulation.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card deep-dive-card">
+        <h3>Cryptographic Security Specification</h3>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+          GhostNote does not embed raw text. Every payload is protected with government-grade authenticated encryption:
+        </p>
+        <ul class="reasons-list" style="margin-top: 0.75rem;">
+          <li><strong>PBKDF2-HMAC-SHA256:</strong> 100,000 iterations with a cryptographically secure 16-byte random salt to protect against dictionary and brute-force attacks.</li>
+          <li><strong>AES-256-GCM:</strong> 256-bit Advanced Encryption Standard in Galois/Counter Mode (AEAD), ensuring both confidentiality and tamper detection.</li>
+          <li><strong>Binary Preamble & CRC-32:</strong> 32-bit Barker sync pattern for sample-accurate frame alignment and CRC-32 checksum for instant corruption detection.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    GhostNote &copy; 2026 &mdash; Built with Python, NumPy, SciPy, SoundFile, Cryptography & FastAPI.
+  </footer>
+
+  <script>
+    let currentCarrierFile = null;
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // Secret message character count
+    document.getElementById('secret-message').addEventListener('input', function(e) {
+      document.getElementById('char-count').innerText = e.target.value.length;
+    });
+
+    // File drag & drop setup
+    const dropZone = document.getElementById('drop-zone-embed');
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+    });
+    dropZone.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files.length > 0) {
+        processAudioFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    document.getElementById('stego-file').addEventListener('change', function(e) {
+      if (e.target.files.length > 0) {
+        document.getElementById('stego-file-label').innerText = e.target.files[0].name;
+      }
+    });
+
+    function handleAudioUpload(event) {
+      if (event.target.files.length > 0) {
+        processAudioFile(event.target.files[0]);
+      }
+    }
+
+    async function loadSample(sampleType) {
+      try {
+        const res = await fetch(`/api/sample/${sampleType}`);
+        const blob = await res.blob();
+        const file = new File([blob], `sample_${sampleType}.wav`, { type: 'audio/wav' });
+        processAudioFile(file);
+      } catch (err) {
+        alert('Failed to load sample: ' + err.message);
+      }
+    }
+
+    async function processAudioFile(file) {
+      currentCarrierFile = file;
+      const preview = document.getElementById('audio-preview');
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+
+      // Call analysis endpoint
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/analyze', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Analysis failed');
+
+        displayAnalysis(data);
+      } catch (err) {
+        alert('Analysis Error: ' + err.message);
+      }
+    }
+
+    function displayAnalysis(data) {
+      document.getElementById('analyzer-results').style.display = 'block';
+
+      const echoScore = data.scores.echo_score;
+      const dsssScore = data.scores.dsss_score;
+
+      document.getElementById('score-echo-val').innerText = echoScore + '%';
+      document.getElementById('score-dsss-val').innerText = dsssScore + '%';
+      document.getElementById('bar-echo').style.width = echoScore + '%';
+      document.getElementById('bar-dsss').style.width = dsssScore + '%';
+
+      const rec = data.scores.recommended_algorithm;
+      document.getElementById('decision-title').innerText = 'Optimal Choice: ' + rec.toUpperCase();
+      document.getElementById('decision-subtitle').innerText = `Confidence: ${data.scores.confidence} | Duration: ${data.profile.duration_seconds}s (${data.profile.sample_rate}Hz)`;
+
+      const icon = rec === 'Echo Hiding' ? '&#127929;' : '&#128308;';
+      document.getElementById('decision-icon').innerHTML = icon;
+
+      document.getElementById('m-flatness').innerText = data.metrics.spectral_flatness.toFixed(3);
+      document.getElementById('m-tonality').innerText = data.metrics.tonality_index.toFixed(3);
+      document.getElementById('m-crest').innerText = data.metrics.spectral_crest.toFixed(1);
+      document.getElementById('m-transients').innerText = data.metrics.transient_density.toFixed(1);
+      document.getElementById('m-dynrange').innerText = data.metrics.dynamic_range_db.toFixed(1) + ' dB';
+      document.getElementById('m-capacity').innerText = '~' + (data.capacity[rec] || 0) + ' B';
+
+      const reasonsList = document.getElementById('reasons-list');
+      reasonsList.innerHTML = '';
+      data.reasons.forEach(r => {
+        const li = document.createElement('li');
+        li.innerText = r;
+        reasonsList.appendChild(li);
+      });
+    }
+
+    async function handleEmbed(e) {
+      e.preventDefault();
+      if (!currentCarrierFile) {
+        alert('Please select or upload a carrier audio file first.');
+        return;
+      }
+
+      const msg = document.getElementById('secret-message').value;
+      const pwd = document.getElementById('secret-password').value;
+      const algo = document.getElementById('algo-choice').value;
+      const fmt = document.getElementById('format-choice').value;
+
+      const btn = document.getElementById('btn-embed');
+      btn.disabled = true;
+      btn.innerText = 'Processing & Encrypting...';
+
+      const formData = new FormData();
+      formData.append('file', currentCarrierFile);
+      formData.append('message', msg);
+      formData.append('password', pwd);
+      formData.append('algorithm', algo);
+      formData.append('output_format', fmt);
+
+      try {
+        const res = await fetch('/api/embed', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Embedding failed');
+
+        const resBox = document.getElementById('embed-result');
+        resBox.style.display = 'block';
+        resBox.className = 'result-box result-success';
+        resBox.innerHTML = `
+          <h4 style="color: var(--accent-emerald); margin-bottom: 0.5rem;">&#10004; Message Encrypted & Embedded!</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">${data.details}</p>
+          <div style="font-size: 0.8rem; margin: 0.5rem 0;">
+            <strong>Algorithm Used:</strong> ${data.algorithm_used} | 
+            <strong>SNR:</strong> ${data.audio_metrics.snr_db} dB | 
+            <strong>Quality:</strong> ${data.audio_metrics.perceptual_distortion}
+          </div>
+          <audio controls src="${data.download_url}" style="margin: 0.75rem 0; width: 100%;"></audio>
+          <a href="${data.download_url}" download="${data.filename}" class="btn-sample" style="display: inline-block; padding: 0.5rem 1rem; color: #fff; background: var(--accent-cyan); text-decoration: none; border-radius: 6px; font-weight: 700;">
+            &#11015; Download Stego Audio (${data.filename})
+          </a>
+        `;
+      } catch (err) {
+        const resBox = document.getElementById('embed-result');
+        resBox.style.display = 'block';
+        resBox.className = 'result-box result-error';
+        resBox.innerHTML = `<h4 style="color: var(--accent-rose);">&#9888; Embedding Failed</h4><p style="font-size: 0.85rem; margin-top: 0.3rem;">${err.message}</p>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Encrypt & Embed into Audio';
+      }
+    }
+
+    async function handleExtract(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById('stego-file');
+      if (fileInput.files.length === 0) {
+        alert('Please choose a stego audio file to extract.');
+        return;
+      }
+
+      const pwd = document.getElementById('extract-password').value;
+      const hint = document.getElementById('extract-hint').value;
+
+      const btn = document.getElementById('btn-extract');
+      btn.disabled = true;
+      btn.innerText = 'Extracting & Decrypting...';
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      formData.append('password', pwd);
+      formData.append('algorithm_hint', hint);
+
+      try {
+        const res = await fetch('/api/extract', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Extraction failed');
+
+        const resBox = document.getElementById('extract-result');
+        resBox.style.display = 'block';
+
+        if (data.success) {
+          resBox.className = 'result-box result-success';
+          resBox.innerHTML = `
+            <h4 style="color: var(--accent-emerald);">&#10004; Extraction & Authentication Successful!</h4>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin: 0.4rem 0;">
+              <strong>Algorithm:</strong> ${data.algorithm} | 
+              <strong>Ciphertext:</strong> ${data.ciphertext_len} bytes
+            </div>
+            <label style="margin-top: 0.6rem;">Decrypted Plaintext Message:</label>
+            <div class="plaintext-display">${escapeHtml(data.plaintext)}</div>
+            <button class="btn-sample" onclick="navigator.clipboard.writeText('${escapeJs(data.plaintext)}'); alert('Copied to clipboard!');">&#128203; Copy Message</button>
+          `;
+        } else {
+          resBox.className = 'result-box result-error';
+          resBox.innerHTML = `
+            <h4 style="color: var(--accent-rose);">&#9888; Decryption Failed</h4>
+            <p style="font-size: 0.85rem; margin-top: 0.3rem;">${data.details}</p>
+          `;
+        }
+      } catch (err) {
+        const resBox = document.getElementById('extract-result');
+        resBox.style.display = 'block';
+        resBox.className = 'result-box result-error';
+        resBox.innerHTML = `<h4 style="color: var(--accent-rose);">&#9888; Extraction Error</h4><p style="font-size: 0.85rem; margin-top: 0.3rem;">${err.message}</p>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Extract & Decrypt Message';
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    function escapeJs(str) {
+      return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+    }
+  </script>
+</body>
+</html>
